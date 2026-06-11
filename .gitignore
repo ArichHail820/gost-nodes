@@ -1,0 +1,5 @@
+*.log
+*.pcap
+node.yaml
+gost
+gost.tar.gz
