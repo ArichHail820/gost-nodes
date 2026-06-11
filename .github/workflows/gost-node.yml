@@ -71,40 +71,40 @@ jobs:
           # 0.0.0.0::PORT 非法地址导致 bind 失败)。这里把 socks5 + rtcp 反向隧道写全。
           write_cfg() {
             local port="$1"
-            cat > node.yaml <<EOF
-services:
-- name: socks
-  addr: "127.0.0.1:1080"
-  handler:
-    type: socks5
-  listener:
-    type: tcp
-- name: reverse
-  addr: "127.0.0.1:${port}"
-  handler:
-    type: rtcp
-  listener:
-    type: rtcp
-    chain: relay
-  forwarder:
-    nodes:
-    - name: socks-local
-      addr: "127.0.0.1:1080"
-chains:
-- name: relay
-  hops:
-  - name: hop
-    nodes:
-    - name: server
-      addr: "${SERVER_ADDR}:${RELAY_PORT}"
-      connector:
-        type: relay
-        auth:
-          username: ${RELAY_USER}
-          password: ${TOKEN}
-      dialer:
-        type: quic
-EOF
+            {
+              echo 'services:'
+              echo '- name: socks'
+              echo '  addr: "127.0.0.1:1080"'
+              echo '  handler:'
+              echo '    type: socks5'
+              echo '  listener:'
+              echo '    type: tcp'
+              echo '- name: reverse'
+              echo "  addr: \"127.0.0.1:${port}\""
+              echo '  handler:'
+              echo '    type: rtcp'
+              echo '  listener:'
+              echo '    type: rtcp'
+              echo '    chain: relay'
+              echo '  forwarder:'
+              echo '    nodes:'
+              echo '    - name: socks-local'
+              echo '      addr: "127.0.0.1:1080"'
+              echo 'chains:'
+              echo '- name: relay'
+              echo '  hops:'
+              echo '  - name: hop'
+              echo '    nodes:'
+              echo '    - name: server'
+              echo "      addr: \"${SERVER_ADDR}:${RELAY_PORT}\""
+              echo '      connector:'
+              echo '        type: relay'
+              echo '        auth:'
+              echo "          username: ${RELAY_USER}"
+              echo "          password: ${TOKEN}"
+              echo '      dialer:'
+              echo '        type: quic'
+            } > node.yaml
           }
 
           GOST_PID=""; got=""
