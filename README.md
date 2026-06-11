@@ -6,16 +6,16 @@ GitHub Actions 跑出口节点池:每个 runner 用 gost 反向隧道(relay+quic
 
 ## 部署
 
-### 1. 服务器装 gost relay(取代 frps)
+### 1. 服务器一键装(gost relay + mihomo,自包含)
 
 把 `install_server_gost.sh` 传到服务器跑:
 
 ```bash
-sudo TOKEN=你的强口令 RELAY_PORT=8443 bash install_server_gost.sh
-# 云安全组放行 8443/udp
+sudo TOKEN=你的relay口令 HY2_PASSWORD=你的hy2密码 HY2_PORT=443 bash install_server_gost.sh
+# 云安全组放行 8443/udp(节点接入)和 443/udp(客户端 hy2)
 ```
 
-mihomo 不用动(仍连 `127.0.0.1:20001..20060`)。
+脚本会装 gost relay(8443/quic)+ mihomo(hy2 入口 + 出口池),并注册 systemd。出口组默认 `load-balance round-robin`(IP 逐连接轮换);想粘住一个节点用 `GROUP_TYPE=url-test`。
 
 ### 2. 配置仓库 Secrets
 
